@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard SAC 2024 — Infractions Schaerbeek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Lexend+Deca:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles1030.css">
+</head>
+<body class="light">
+<div id="app">
+<nav id="sidebar">
+  <div class="sbh">
+    <div class="logo-area">
+      <img src="images/1030_Icon.png" class="logo-icon" alt="1030">
+      <span class="logo-txt">SAC 2024</span>
+    </div>
+    <button class="tbtn" id="sbtog">☰</button>
+  </div>
+  <div class="sbc" id="sbcnt">
+    <div class="fls">
+      <span class="fll">📅 Période (mois)</span>
+      <div class="slr"><label>Début</label><input type="range" id="mS" min="1" max="12" value="1"><span class="rv" id="mSv">1</span></div>
+      <div class="slr"><label>Fin</label><input type="range" id="mE" min="1" max="12" value="12"><span class="rv" id="mEv">12</span></div>
+      <div class="rl"><span>Jan</span><span>Juin</span><span>Déc</span></div>
+    </div>
+    <div class="fls">
+      <span class="fll">📋 Catégorie</span>
+      <div class="cbg" id="cbcat">
+        <label class="cbi"><input type="checkbox" value="Arrêt et Stationnement" checked> Arrêt et Stationnement</label>
+        <label class="cbi"><input type="checkbox" value="SAC CLASSIQUE" checked> SAC CLASSIQUE</label>
+        <label class="cbi"><input type="checkbox" value="SAC MIXTE" checked> SAC MIXTE</label>
+      </div>
+    </div>
+    <div class="fls">
+      <span class="fll">⚖️ Décision statut</span>
+      <div class="cbg" id="cbstat">
+        <label class="cbi"><input type="checkbox" value="Amende" checked> Amende</label>
+        <label class="cbi"><input type="checkbox" value="Sans suite" checked> Sans suite</label>
+        <label class="cbi"><input type="checkbox" value="Avertissement" checked> Avertissement</label>
+        <label class="cbi"><input type="checkbox" value="Pas d'amende" checked> Pas d'amende</label>
+        <label class="cbi"><input type="checkbox" value="" checked> (Vide)</label>
+      </div>
+    </div>
+    <div class="fls">
+      <span class="fll">🏘️ Quartier</span>
+      <div class="msd">
+        <div class="mst" id="qrtT"><span id="qrtL">Tous les quartiers</span><span>▾</span></div>
+        <div class="msdp" id="qrtD">
+          <div class="mso" data-v="__all__"><input type="checkbox" checked> Tous</div>
+          <div class="mso" data-v="Bienfaiteurs"><input type="checkbox" checked> Bienfaiteurs</div>
+          <div class="mso" data-v="Cerisiers"><input type="checkbox" checked> Cerisiers</div>
+          <div class="mso" data-v="Colignon"><input type="checkbox" checked> Colignon</div>
+          <div class="mso" data-v="Coteaux-Josaphat"><input type="checkbox" checked> Coteaux-Josaphat</div>
+          <div class="mso" data-v="Dehors1030"><input type="checkbox" checked> Dehors1030</div>
+          <div class="mso" data-v="Helmet-Hamoir"><input type="checkbox" checked> Helmet-Hamoir</div>
+          <div class="mso" data-v="Jardin"><input type="checkbox" checked> Jardin</div>
+          <div class="mso" data-v="Linthout"><input type="checkbox" checked> Linthout</div>
+          <div class="mso" data-v="Nord"><input type="checkbox" checked> Nord</div>
+          <div class="mso" data-v="Palais-Reine"><input type="checkbox" checked> Palais-Reine</div>
+          <div class="mso" data-v="Parc Josaphat"><input type="checkbox" checked> Parc Josaphat</div>
+          <div class="mso" data-v="Plasky"><input type="checkbox" checked> Plasky</div>
+          <div class="mso" data-v="Reyers"><input type="checkbox" checked> Reyers</div>
+          <div class="mso" data-v="Terdelt-Fleur"><input type="checkbox" checked> Terdelt-Fleur</div>
+        </div>
+      </div>
+    </div>
+    <div class="fls">
+      <span class="fll">👤 Gestionnaire</span>
+      <div class="msd">
+        <div class="mst" id="mgrT"><span id="mgrL">Tous les gestionnaires</span><span>▾</span></div>
+        <div class="msdp" id="mgrD">
+          <div class="mso" data-v="__all__"><input type="checkbox" checked> Tous</div>
+          <div class="mso" data-v="MBR7G"><input type="checkbox" checked> MBR7G</div>
+          <div class="mso" data-v="ML6DZ"><input type="checkbox" checked> ML6DZ</div>
+          <div class="mso" data-v="MEAS9"><input type="checkbox" checked> MEAS9</div>
+          <div class="mso" data-v="M3GQ6"><input type="checkbox" checked> M3GQ6</div>
+          <div class="mso" data-v="M711T"><input type="checkbox" checked> M711T</div>
+          <div class="mso" data-v="MYY9F"><input type="checkbox" checked> MYY9F</div>
+          <div class="mso" data-v="M8V91"><input type="checkbox" checked> M8V91</div>
+        </div>
+      </div>
+    </div>
+    <div class="fls">
+      <span class="fll">📄 Type de document</span>
+      <div class="tgg" id="tpfil">
+        <button class="tgb act" data-v="">Tous</button>
+        <button class="tgb" data-v="Procès-verbal initial">PV Initial</button>
+        <button class="tgb" data-v="Constat">Constat</button>
+      </div>
+    </div>
+    <div class="fls">
+      <span class="fll">💶 Montant total max. (€)</span>
+      <div class="slr"><label>Max</label><input type="range" id="mxT" min="0" max="500" value="500" step="10"><span class="rv" id="mxTv">500</span></div>
+      <div class="rl"><span>0€</span><span>250€</span><span>500€</span></div>
+    </div>
+    <div class="fls">
+      <span class="fll">Filtres actifs</span>
+      <div class="chips" id="chipsA"></div>
+    </div>
+  </div>
+  <div class="sbf">
+    <button class="brst" id="brst">↺ Réinitialiser les filtres</button>
+    <button class="bexp" id="bexp">⬇ Exporter CSV filtré</button>
+    <a class="bnav" href="SAC2024_Charts1030_Contrevenant.html">⇄ Contrevenants</a>
+  </div>
+</nav>
+
+<div id="main">
+  <header id="hdr">
+    <div class="hdl">
+      <img src="images/schaerbeek1030_logo.png" class="hdr-logo" alt="1030 Schaerbeek">
+      <div class="hdtt">
+        <div class="hdt">Infractions Schaerbeek 2024</div>
+        <div class="hds">SAC_2024_Infraction · Dernière mise à jour : 31/12/2024</div>
+      </div>
+    </div>
+    <div class="hdr2">
+      <div id="rbdg">— / 13.734 enregistrements</div>
+      <button class="thbtn" id="thbtn">☀️</button>
+    </div>
+  </header>
+
+  <div id="cnt">
+    <div class="kg">
+      <div class="kc" id="k0">
+        <div class="ktop"><div class="kico bl"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#1BAEA1" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z"/></svg></div><div class="kbdgs"><span class="kbdg nu" id="k0b">—</span><span class="kbdg nu" id="k0m">—</span></div></div>
+        <div class="kval" id="k0v">—</div><div class="klbl">Total infractions</div>
+      </div>
+      <div class="kc" id="k1">
+        <div class="ktop"><div class="kico pu"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#E3256B" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div><div class="kbdgs"><span class="kbdg nu" id="k1b">—</span><span class="kbdg nu" id="k1m">—</span></div></div>
+        <div class="kval" id="k1v">—</div><div class="klbl">Facturé</div>
+      </div>
+      <div class="kc" id="k2">
+        <div class="ktop"><div class="kico gr"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#A2C426" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="kbdgs"><span class="kbdg nu" id="k2b">—</span><span class="kbdg nu" id="k2m">—</span></div></div>
+        <div class="kval" id="k2v">—</div><div class="klbl">Perçu</div>
+      </div>
+      <div class="kc" id="k3">
+        <div class="ktop"><div class="kico tl"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#FDC200" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><div class="kbdgs"><span class="kbdg nu" id="k3b">—</span><span class="kbdg nu" id="k3m">—</span></div></div>
+        <div class="kval" id="k3v">—</div><div class="klbl">Taux de recouvrement</div>
+      </div>
+      <div class="kc" id="k4">
+        <div class="ktop"><div class="kico or"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#EE7937" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="kbdgs"><span class="kbdg nu" id="k4b">—</span><span class="kbdg nu" id="k4m">—</span></div></div>
+        <div class="kval" id="k4v">—</div><div class="klbl">En attente</div>
+      </div>
+      <div class="kc" id="k5">
+        <div class="ktop"><div class="kico pk"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#CF7A87" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><div class="kbdgs"><span class="kbdg nu" id="k5b">—</span><span class="kbdg nu" id="k5m">—</span></div></div>
+        <div class="kval" id="k5v">—</div><div class="klbl">Contrevenants uniques</div>
+      </div>
+    </div>
+    <p class="knote">1er indicateur : variation 1er semestre (jan–juin) vs 2e semestre (jul–déc). 2e indicateur : variation mensuelle moyenne. ▲ positif · ▼ négatif.</p>
+
+    <div class="cc">
+      <div class="ch"><span class="ctit">Évolution mensuelle par catégorie</span><div class="chr"><div class="pls" id="p12"><button class="pll act" data-v="cat">Catégorie</button><button class="pll" data-v="type">Type</button></div><button class="dlb" onclick="dlC('g12','curvas-mensuales')">⬇ PNG</button></div></div>
+      <canvas id="g12" role="img" aria-label="Courbes mensuelles par catégorie" height="80"></canvas>
+    </div>
+
+    <div class="cc">
+      <div class="ch"><span class="ctit">Évolution mensuelle — Infractions &amp; Recouvrement</span><div class="chr"><div class="pls" id="p1"><button class="pll act" data-v="both">Les deux</button><button class="pll" data-v="infr">Infractions</button><button class="pll" data-v="rec">Recouvrement</button></div><button class="dlb" onclick="dlC('g1','evolucion-mensual')">⬇ PNG</button></div></div>
+      <canvas id="g1" role="img" aria-label="Évolution mensuelle" height="80"></canvas>
+    </div>
+
+    <div class="cr c3">
+      <div class="cc" style="margin-bottom:0"><div class="ch"><span class="ctit">Por Catégorie</span><button class="dlb" onclick="dlC('g2','donut-categorie')">⬇ PNG</button></div><div class="donut-wrap"><canvas id="g2" role="img" aria-label="Donut catégorie"></canvas></div></div>
+      <div class="cc" style="margin-bottom:0"><div class="ch"><span class="ctit">Por Décision statut</span><button class="dlb" onclick="dlC('g3','donut-statut')">⬇ PNG</button></div><div class="donut-wrap"><canvas id="g3" role="img" aria-label="Donut statut"></canvas></div></div>
+      <div class="cc" style="margin-bottom:0"><div class="ch"><span class="ctit">Por Source</span><button class="dlb" onclick="dlC('g4','donut-source')">⬇ PNG</button></div><div class="donut-wrap"><canvas id="g4" role="img" aria-label="Donut source"></canvas></div></div>
+    </div>
+    <div style="margin-bottom:24px"></div>
+
+    <div class="cc">
+      <div class="ch"><span class="ctit">Infractions par catégorie — Aires empilées</span><div class="chr"><div class="pls" id="p7"><button class="pll act" data-v="stacked">Empilé</button><button class="pll" data-v="pct">Pourcentage</button></div><button class="dlb" onclick="dlC('g7','area-apilada')">⬇ PNG</button></div></div>
+      <canvas id="g7" role="img" aria-label="Aires empilées" height="80"></canvas>
+    </div>
+
+    <div class="cr c2">
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Par quartier</span><div class="chr"><div class="pls" id="p6"><button class="pll act" data-v="count">Infractions</button><button class="pll" data-v="total">Facturé</button><button class="pll" data-v="bal">En attente</button></div><button class="dlb" onclick="dlC('g6','barrios')">⬇ PNG</button></div></div>
+        <canvas id="g6" role="img" aria-label="Infractions par quartier" height="200"></canvas>
+      </div>
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Top 15 Rues</span><div class="chr"><div class="pls" id="p5"><button class="pll act" data-v="count">Infractions</button><button class="pll" data-v="total">Recouvrement</button><button class="pll" data-v="bal">En attente</button></div><button class="dlb" onclick="dlC('g5','top-calles')">⬇ PNG</button></div></div>
+        <canvas id="g5" role="img" aria-label="Top 15 rues" height="200"></canvas>
+      </div>
+    </div>
+    <div style="margin-bottom:24px"></div>
+
+    <div class="cc">
+      <div class="ch"><span class="ctit">Heatmap — Infractions par Mois × Jour de la semaine</span></div>
+      <div id="hmg"></div>
+    </div>
+
+    <div class="cr c2">
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Scatter — Facturé vs Perçu</span><div class="chr"><button class="dlb" onclick="dlC('g9','scatter')">⬇ PNG</button></div></div>
+        <canvas id="g9" role="img" aria-label="Scatter facturé vs perçu" height="220"></canvas>
+      </div>
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Top 12 Articles enfreints</span><div class="chr"><div class="pls" id="p10"><button class="pll act" data-v="count">Infractions</button><button class="pll" data-v="total">Recouvrement</button></div><button class="dlb" onclick="dlC('g10','top-articulos')">⬇ PNG</button></div></div>
+        <canvas id="g10" role="img" aria-label="Top 12 articles" height="220"></canvas>
+      </div>
+    </div>
+    <div style="margin-bottom:24px"></div>
+
+    <div class="cc">
+      <div class="ch"><span class="ctit">Tableau Top N</span></div>
+      <div class="tctl">
+        <select class="dsel" id="dimsel"><option value="str">Rue (str)</option><option value="qrt">Quartier (qrt)</option><option value="mgr">Gestionnaire (mgr)</option></select>
+        <select class="nsel" id="nsel"><option value="10">Top 10</option><option value="20">Top 20</option><option value="50">Top 50</option></select>
+      </div>
+      <div class="twrp">
+        <table id="tbl">
+          <thead><tr>
+            <th>#</th>
+            <th class="sc" data-c="dim">Dimension</th>
+            <th class="sc" data-c="count">N° Doss.</th>
+            <th class="sc" data-c="total">Facturé</th>
+            <th class="sc" data-c="paid">Perçu</th>
+            <th class="sc" data-c="rate">Taux recouvr.</th>
+            <th class="sc" data-c="bal">En attente</th>
+            <th>Progression</th>
+          </tr></thead>
+          <tbody id="tblB"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="js/chart.umd.min.js"></script>
+<script src="data/SAC2024_Infractions.js"></script>
+<script src="js/dashboard_infraction.js"></script>
+</body>
+</html>

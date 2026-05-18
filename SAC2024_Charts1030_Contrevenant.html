@@ -1,0 +1,363 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAC 2024 — Contrevenants · Schaerbeek 1030</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;600;700&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="js/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/styles1030.css">
+</head>
+<body class="light">
+<div id="app">
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sbh">
+    <div class="logo-area">
+      <!-- logo: images/1030_Icon.png -->
+      <img src="images/1030_Icon.png" class="logo-icon" alt="1030">
+      <span class="logo-txt">SAC 2024</span>
+    </div>
+    <button id="sbToggle" title="Réduire">☰</button>
+  </div>
+
+  <div class="sb-body">
+    <!-- Type contrevenant -->
+    <div class="sbf">
+      <span class="sbf-label">👤 Type contrevenant</span>
+      <div class="cbg">
+        <label class="cb-row"><input type="checkbox" id="cbPhys" checked onchange="onTypeChange()"> Pers. physique</label>
+        <label class="cb-row"><input type="checkbox" id="cbMor" checked onchange="onTypeChange()"> Pers. morale</label>
+      </div>
+    </div>
+
+    <!-- Genre -->
+    <div class="sbf">
+      <span class="sbf-label">⚧ Genre / Type</span>
+      <div class="cbg">
+        <label class="cb-row"><input type="checkbox" class="cbGenre" value="M" checked onchange="onGenreChange()"> Monsieur (M)</label>
+        <label class="cb-row"><input type="checkbox" class="cbGenre" value="F" checked onchange="onGenreChange()"> Madame (F)</label>
+        <label class="cb-row"><input type="checkbox" class="cbGenre" value="S" checked onchange="onGenreChange()"> Société (S)</label>
+        <label class="cb-row"><input type="checkbox" class="cbGenre" value="H" checked onchange="onGenreChange()"> H</label>
+        <label class="cb-row"><input type="checkbox" class="cbGenre" value="I" checked onchange="onGenreChange()"> I</label>
+      </div>
+    </div>
+
+    <!-- Pays -->
+    <div class="sbf">
+      <span class="sbf-label">🌍 Pays d'origine</span>
+      <div class="cbg">
+        <label class="cb-row"><input type="radio" name="rPays" value="all" checked onchange="onPaysChange()"> Tous</label>
+        <label class="cb-row"><input type="radio" name="rPays" value="belgium" onchange="onPaysChange()"> Belgique uniquement</label>
+        <label class="cb-row"><input type="radio" name="rPays" value="autres" onchange="onPaysChange()"> Étrangers</label>
+      </div>
+    </div>
+
+    <!-- Localité dropdown -->
+    <div class="sbf">
+      <span class="sbf-label">📍 Localité</span>
+      <select id="locSearch" onchange="onLocSearch()">
+        <option value="">— Toutes les localités —</option>
+      </select>
+      <div id="locCount" style="font-size:.7rem;color:var(--t3);margin-top:4px"></div>
+    </div>
+
+    <!-- Quartier 1030 -->
+    <div class="sbf">
+      <span class="sbf-label">🏘️ Quartier 1030</span>
+      <select id="quartierFilter" onchange="onQuartierChange()">
+        <option value="all">— Tous les quartiers —</option>
+        <option value="Dehors1030">Dehors1030</option>
+        <option value="Bienfaiteurs">Bienfaiteurs</option>
+        <option value="Cerisiers">Cerisiers</option>
+        <option value="Colignon">Colignon</option>
+        <option value="Coteaux-Josaphat">Coteaux-Josaphat</option>
+        <option value="Helmet-Hamoir">Helmet-Hamoir</option>
+        <option value="Jardin">Jardin</option>
+        <option value="Linthout">Linthout</option>
+        <option value="Nord">Nord</option>
+        <option value="Palais-Reine">Palais-Reine</option>
+        <option value="Parc Josaphat">Parc Josaphat</option>
+        <option value="Plasky">Plasky</option>
+        <option value="Reyers">Reyers</option>
+        <option value="Terdelt-Fleur">Terdelt-Fleur</option>
+      </select>
+    </div>
+
+    <!-- Âge -->
+    <div class="sbf">
+      <span class="sbf-label">🎂 Tranche d'âge</span>
+      <div class="slr"><label>Min</label><input type="range" id="rAgeMin" min="15" max="94" value="15" oninput="onAgeChange()"><span class="rv" id="ageMinLbl">15</span></div>
+      <div class="slr"><label>Max</label><input type="range" id="rAgeMax" min="15" max="94" value="94" oninput="onAgeChange()"><span class="rv" id="ageMaxLbl">94</span></div>
+      <div class="rl"><span>15</span><span>54</span><span>94</span></div>
+    </div>
+
+    <!-- Montant -->
+    <div class="sbf">
+      <span class="sbf-label">💶 Montant payé (€)</span>
+      <div class="slr"><label>Min</label><input type="range" id="rMntMin" min="0" max="14222" value="0" step="10" oninput="onMontantChange()"><span class="rv" id="mntMinLbl">0</span></div>
+      <div class="slr"><label>Max</label><input type="range" id="rMntMax" min="0" max="14222" value="14222" step="10" oninput="onMontantChange()"><span class="rv" id="mntMaxLbl">14 222</span></div>
+      <div class="rl"><span>0 €</span><span>7 111 €</span><span>14 222 €</span></div>
+    </div>
+
+    <!-- Chips filtres actifs -->
+    <div class="sbf">
+      <span class="sbf-label">Filtres actifs</span>
+      <div id="chips"></div>
+    </div>
+  </div>
+
+  <div class="sb-btns">
+    <button class="sb-btn" onclick="resetAll()">↺ Réinitialiser les filtres</button>
+    <button class="sb-btn primary" onclick="exportCSV()">⬇ Exporter CSV filtré</button>
+    <a class="bnav" href="SAC2024_Charts1030_Infractions.html">⇄ Infractions</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- HEADER -->
+  <header id="hdr">
+    <div class="hdr-left">
+      <img src="images/schaerbeek1030_logo.png" class="hdr-logo" alt="Schaerbeek 1030">
+      <div>
+        <div class="hdr-title">Infractions Schaerbeek 2024 (Contrevenants)</div>
+        <div class="hdr-sub">SAC_2024_Contrevenant · Dernière mise à jour : 31/12/2024</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <span id="badge">9.304 / 9.304 contrevenants</span>
+      <button id="themeBtn" title="Thème clair/sombre">☀️</button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- KPI ROW 1 : 4 KPIs -->
+    <div class="kg">
+      <div class="kc">
+        <div class="kc-top">
+          <div class="kico tl">💶</div>
+          <div class="kbdgs">
+            <span class="kbdg nu" id="k1b1">—</span>
+          </div>
+        </div>
+        <div class="kc-label">Montant total perçu</div>
+        <div class="kc-val" id="k1v">—</div>
+      </div>
+      <div class="kc">
+        <div class="kc-top">
+          <div class="kico pk">👤</div>
+          <div class="kbdgs">
+            <span class="kbdg nu" id="k2b1">—</span>
+          </div>
+        </div>
+        <div class="kc-label">Total contrevenants</div>
+        <div class="kc-val" id="k2v">—</div>
+      </div>
+      <div class="kc">
+        <div class="kc-top">
+          <div class="kico gr">✅</div>
+          <div class="kbdgs">
+            <span class="kbdg nu" id="k3b1">—</span>
+          </div>
+        </div>
+        <div class="kc-label">Taux de paiement</div>
+        <div class="kc-val" id="k3v">—</div>
+      </div>
+      <div class="kc">
+        <div class="kc-top">
+          <div class="kico yw">📋</div>
+          <div class="kbdgs">
+            <span class="kbdg nu" id="k4b1">—</span>
+          </div>
+        </div>
+        <div class="kc-label">Total infractions · Type</div>
+        <div class="kc-val" id="k4v">—</div>
+      </div>
+      <div class="kc">
+        <div class="kc-top">
+          <div class="kico or">📂</div>
+          <div class="kbdgs">
+            <span class="kbdg nu" id="k5b1">—</span>
+          </div>
+        </div>
+        <div class="kc-label">Total infractions · Catégorie</div>
+        <div class="kc-val" id="k5v">—</div>
+      </div>
+      <div class="kc">
+        <div class="kc-top">
+          <div class="kico pk">🏠</div>
+          <div class="kbdgs">
+            <span class="kbdg nu" id="k6b1">—</span>
+          </div>
+        </div>
+        <div class="kc-label">Résidents à Schaerbeek</div>
+        <div class="kc-val" id="k6v">—</div>
+      </div>
+    </div>
+    <div class="knote">Badges · Type : PV / Constat · Catégorie : Classique / Stationnement / Mixte · Résidents : % du total filtré</div>
+
+    <!-- ROW A : G4a donut + G5a barres (type d'infraction) -->
+    <div class="grid-1-2">
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Type d'infraction</div><div class="card-sub">Procès-Verbal vs Constat</div></div>
+          <button class="dl-btn" onclick="dlChart('g4c','type_infraction')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g4c"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Type d'infraction par localité de résidence du contrevenant</div><div class="card-sub">PV · Constat</div></div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <label class="toggle-row"><input type="checkbox" id="toggleDehors" onchange="g5(getFiltered());g5b(getFiltered())"> Inclure Dehors1030</label>
+            <button class="dl-btn" onclick="dlChart('g5c','type_infraction_localite')">⬇ PNG</button>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g5c"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ROW B : G0 + G3 + G1 -->
+    <div class="grid-1-2-1">
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Résidence des contrevenants</div><div class="card-sub">Schaerbeek · Belgique · Étranger</div></div>
+          <button class="dl-btn" onclick="dlChart('g0c','residence_contrevenants')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g0c"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Montant total par localité de résidence du contrevenant</div><div class="card-sub">Barres horizontales triées</div></div>
+          <button class="dl-btn" onclick="dlChart('g3c','montant_quartier')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g3c"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Type de contrevenant</div><div class="card-sub">Physique vs Morale</div></div>
+          <button class="dl-btn" onclick="dlChart('g1c','type_contrevenant')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g1c"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ROW C : G4b donut + G5b barres (catégorie d'infraction) -->
+    <div class="grid-1-2">
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Catégorie d'infraction</div><div class="card-sub">Classique · Stationnement · Mixte</div></div>
+          <button class="dl-btn" onclick="dlChart('g4bc','categorie_infraction')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g4bc"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Catégorie d'infraction par localité de résidence du contrevenant</div><div class="card-sub">Classique · Stationnement · Mixte</div></div>
+          <button class="dl-btn" onclick="dlChart('g5bc','categorie_infraction_localite')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g5bc"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ROW D : G6 + G2 + G8 -->
+    <div class="grid3">
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Distribution des montants payés</div><div class="card-sub">Tranches tarifaires SAC</div></div>
+          <button class="dl-btn" onclick="dlChart('g6c','distribution_montants')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g6c"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Genre / Type</div><div class="card-sub">Répartition M · F · S · H</div></div>
+          <button class="dl-btn" onclick="dlChart('g2c','genre_type')">⬇ PNG</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g2c"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div><div class="card-title">Distribution des âges des contrevenants</div><div class="card-sub">Tranches de 5 ans</div></div>
+          <button class="dl-btn" onclick="dlChart('g8c','distribution_ages')">⬇ PNG</button>
+        </div>
+        <div class="pill-row" style="margin-bottom:4px">
+          <button class="pill active" onclick="setG8Pill(this,'Tous')">Tous</button>
+          <button class="pill" onclick="setG8Pill(this,'M')">Monsieur</button>
+          <button class="pill" onclick="setG8Pill(this,'F')">Madame</button>
+        </div>
+        <div class="chart-wrap" style="height:225px"><canvas id="g8c"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ROW F : G9 completo -->
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Top localités par infractions cumulées · Résidence du contrevenant × Type contrevenant</div><div class="card-sub">Type contrevenant : montant moyen (€) · Type &amp; Catégorie : moyenne d'infractions par contrevenant · Chiffre gris : total</div></div>
+        <div class="pill-row">
+          <button class="pill active" onclick="setG9Top(this,10)">Top 10</button>
+          <button class="pill" onclick="setG9Top(this,20)">Top 20</button>
+        </div>
+      </div>
+      <div id="g9" style="overflow-x:auto"></div>
+    </div>
+
+
+    <!-- ROW H : G11 — déplacé après G9 -->
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Top N contrevenants</div><div class="card-sub">Classés par montant payé</div></div>
+        <div class="pill-row">
+          <button class="pill active" onclick="setTopN(this,10)">Top 10</button>
+          <button class="pill" onclick="setTopN(this,20)">Top 20</button>
+          <button class="pill" onclick="setTopN(this,50)">Top 50</button>
+        </div>
+      </div>
+      <div id="g11" style="overflow-x:auto"></div>
+    </div>
+
+    <!-- SECTION : Résidents de Schaerbeek -->
+    <div class="section-hdr">Contrevenants résidents de Schaerbeek</div>
+
+    <!-- ROW G9b : Heatmap par Quartier 1030 -->
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Infractions cumulées par quartiers à Schaerbeek · Résidence du contrevenant × Type contrevenant</div><div class="card-sub">Type contrevenant : montant moyen (€) · Type &amp; Catégorie : moyenne d'infractions par contrevenant · Chiffre gris : total</div></div>
+      </div>
+      <div id="g9b" style="overflow-x:auto"></div>
+    </div>
+
+    <!-- ROW G12-G13 : Taux paiement + Profil récidiviste par quartier -->
+    <div class="grid2">
+      <div class="card">
+        <div class="card-hdr">
+          <div>
+            <div class="card-title">Taux de paiement par quartier</div>
+            <div class="card-sub">% de contrevenants ayant payé · rouge &lt; 70 % · orange &lt; 85 % · vert ≥ 85 %</div>
+          </div>
+        </div>
+        <div style="height:320px;position:relative"><canvas id="g12c"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div>
+            <div class="card-title">Profil récidiviste par quartier</div>
+            <div class="card-sub">% récidivistes (PV &gt; 1) · axe gauche — Montant moyen (€) · axe droit</div>
+          </div>
+        </div>
+        <div style="height:320px;position:relative"><canvas id="g13c"></canvas></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script src="data/SAC2024_Contrevenant.js"></script>
+<script src="js/dashboard_contrevenant.js"></script>
+</body>
+</html>
