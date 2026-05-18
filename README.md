@@ -2,7 +2,8 @@
 
 This statistical study analyzes the recording and application of Municipal Administrative Sanctions (SAC) in the municipality of Schaerbeek during the year 2024. Designed as a key tool to relieve congestion in the criminal justice system and provide an immediate response to behaviors that harm civic coexistence, the SACs allow for a quantitative evaluation of the dynamics of civility, cleanliness, and mobility within the territory managed jointly with the Brussels North Police Zone.Link
 
-https://gis1030.github.io/INF-Paves-Mosaiques-1030\_V2/
+## Link
+https://gis1030.github.io/AG-AdministrativeSanctions-SAC-1030/
 
 ## Details
 
