@@ -1,6 +1,51 @@
 ﻿const MO=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 const DY=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-const TOTAL=DATA.length;
+
+function parseD(s){if(!s||s.length<8)return null;return new Date(+s.substring(0,4),+s.substring(4,6)-1,+s.substring(6,8));}
+function daysDiff(a,b){if(!a||!b)return null;return Math.round((b-a)/86400000);}
+
+// ════════════════════════════════════
+// DATA ADAPTER — GeoJSON FeatureCollection → flat array
+// Permite usar SAC2024_Infraction_Data.js como fuente única
+// para el dashboard y la cartografía GIS.
+// ════════════════════════════════════
+const ROWS = DATA.features.map(f => {
+  const p  = f.properties;
+  const df = p["DateFaits"] || "";
+  let m = 0, dow = 0;
+  if (df.length === 8) {
+    const y  = parseInt(df.substring(0, 4), 10);
+    const mo = parseInt(df.substring(4, 6), 10);
+    const d  = parseInt(df.substring(6, 8), 10);
+    m   = mo;
+    dow = new Date(y, mo - 1, d).getDay();
+  }
+  return {
+    cid:   p["ID.Contrevenant"],
+    src:   p["Source"]               || "",
+    m,
+    dow,
+    paid:  p["MontantPaye"]          || 0,
+    total: p["MontantTotaltotal"]     || 0,
+    bal:   p["SoldeRestantDu"]       || 0,
+    st:    p["DecisionStatut"]       || "",
+    tp:    p["Infraction.Type"]      || "",
+    cat:   p["Infraction.Categorie"] || "",
+    mgr:   p["Agent.CreePar"]        || "",
+    str:   p["Infraction.RueFR"]     || "",
+    art:   p["Infractions.Article"]  || "",
+    qrt:   p["Infraction.Quartier"]  || "",
+    lon:   f.geometry ? f.geometry.coordinates[0] : (p["Infraction.Longitude"] || 0),
+    lat:   f.geometry ? f.geometry.coordinates[1] : (p["Infraction.Latitude"]  || 0),
+    dateF:  parseD(p["DateFaits"]),
+    dateC:  parseD(p["DateCreation"]),
+    dateD:  parseD(p["DateDecisionCreation"]),
+    dateP:  parseD(p["DatePaiement"]),
+    datePx: parseD(p["DatePrescription"])
+  };
+});
+
+const TOTAL=ROWS.length;
 const P6=['#E3256B','#A2C426','#EE7937','#FDC200','#CF7A87','#1BAEA1'];
 const CC={'Arrêt et Stationnement':'#1BAEA1','SAC CLASSIQUE':'#E3256B','SAC MIXTE':'#EE7937'};
 const SC={'Amende':'#1BAEA1','Sans suite':'#CF7A87','Avertissement':'#FDC200',"Pas d'amende":'#E3256B','':'#B5A375'};
@@ -19,7 +64,7 @@ function fE(v){if(v>=1e6)return _fr(v/1e6,2)+' M €';if(v>=1e3)return _fr(v/1e3
 function fEf(v){return _fr(Math.round(v))+' €'}
 
 function applyF(){
-  return DATA.filter(d=>{
+  return ROWS.filter(d=>{
     if(d.m<F.mStart||d.m>F.mEnd)return false;
     if(F.cats.length&&!F.cats.includes(d.cat))return false;
     if(F.stats.length&&!F.stats.includes(d.st))return false;
@@ -186,7 +231,7 @@ function dG7(data){
 
 function dG6(data){
   dC('g6');const{t2,bd}=gTC();
-  const qrts=[...new Set(DATA.map(d=>d.qrt).filter(Boolean))];
+  const qrts=[...new Set(ROWS.map(d=>d.qrt).filter(Boolean))];
   const ag=qrts.map(q=>{const r=data.filter(d=>d.qrt===q);return{q,count:r.length,total:r.reduce((s,d)=>s+d.total,0),bal:r.filter(d=>d.bal>0).reduce((s,d)=>s+d.bal,0)};}).sort((a,b)=>b[g6m]-a[g6m]);
   const n=ag.length;
   const cols=ag.map((_,i)=>P6[i%P6.length]+'CC');
@@ -284,6 +329,93 @@ function dG11(data){
   }).join('');
 }
 
+// ════════════════════════════════════
+// DÉLAIS ADMINISTRATIFS
+// ════════════════════════════════════
+function dDelais(data){
+  const ok=v=>v!==null&&v>=0&&v<730;
+  const regD=data.map(d=>daysDiff(d.dateF,d.dateC)).filter(ok);
+  const decD=data.map(d=>daysDiff(d.dateF,d.dateD)).filter(ok);
+  const payD=data.map(d=>daysDiff(d.dateF,d.dateP)).filter(ok);
+  const avg=arr=>arr.length?Math.round(arr.reduce((s,v)=>s+v,0)/arr.length):null;
+  const fmt=v=>v!==null?v+' j':'—';
+  const avgReg=avg(regD),avgDec=avg(decD),avgPay=avg(payD);
+  document.getElementById('dReg').textContent=fmt(avgReg);
+  document.getElementById('dDec').textContent=fmt(avgDec);
+  document.getElementById('dPay').textContent=fmt(avgPay);
+  document.getElementById('kdRegN').textContent=fN(regD.length)+' doss.';
+  document.getElementById('kdDecN').textContent=fN(decD.length)+' doss.';
+  document.getElementById('kdPayN').textContent=fN(payD.length)+' doss.';
+  const {t2,bd}=gTC();
+  // Barres: délai moyen de décision par quartier
+  const qMap={};
+  data.forEach(d=>{const v=daysDiff(d.dateF,d.dateD);if(ok(v)){if(!qMap[d.qrt])qMap[d.qrt]={s:0,n:0};qMap[d.qrt].s+=v;qMap[d.qrt].n++;}});
+  const qData=Object.entries(qMap).map(([q,{s,n}])=>({q,avg:Math.round(s/n),n})).filter(x=>x.n>=5).sort((a,b)=>b.avg-a.avg);
+  dC('gDelQ');
+  CH['gDelQ']=new Chart(document.getElementById('gDelQ'),{type:'bar',
+    data:{labels:qData.map(x=>x.q),datasets:[{label:'Délai moyen (j)',data:qData.map(x=>x.avg),backgroundColor:qData.map((_,i)=>P6[i%P6.length]+'CC'),borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fN(ctx.raw)+' j ('+fN(qData[ctx.dataIndex].n)+' doss.)'}}},
+      scales:{x:{grid:{color:bd},ticks:{color:t2,callback:v=>v+' j'},beginAtZero:true},y:{grid:{color:'transparent'},ticks:{color:t2,font:{size:10}}}}}});
+  // Histogramme: distribution des délais de décision
+  const binLbls=['≤15 j','16–30 j','31–60 j','61–90 j','91–120 j','121–180 j','>180 j'];
+  const binCnts=new Array(7).fill(0);
+  decD.forEach(v=>{if(v<=15)binCnts[0]++;else if(v<=30)binCnts[1]++;else if(v<=60)binCnts[2]++;else if(v<=90)binCnts[3]++;else if(v<=120)binCnts[4]++;else if(v<=180)binCnts[5]++;else binCnts[6]++;});
+  dC('gDelH');
+  CH['gDelH']=new Chart(document.getElementById('gDelH'),{type:'bar',
+    data:{labels:binLbls,datasets:[{label:'Dossiers',data:binCnts,backgroundColor:[...P6,...P6].slice(0,7).map(c=>c+'CC'),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+fN(ctx.raw)+' doss.'}}},
+      scales:{x:{grid:{color:'transparent'},ticks:{color:t2,font:{size:10}}},y:{grid:{color:bd},ticks:{color:t2,callback:v=>fN(v)},beginAtZero:true}}}});
+}
+
+// ════════════════════════════════════
+// RISQUE DE PRESCRIPTION
+// ════════════════════════════════════
+function dPrescription(data){
+  const TODAY=new Date();
+  const D90=new Date(TODAY.getTime()+90*86400000);
+  const D180=new Date(TODAY.getTime()+180*86400000);
+  const open=data.filter(d=>d.bal>0&&d.datePx);
+  const iP=d=>d.datePx<TODAY;
+  const iC=d=>d.datePx>=TODAY&&d.datePx<=D90;
+  const iV=d=>d.datePx>D90&&d.datePx<=D180;
+  const iE=d=>d.datePx>D180;
+  const nP=open.filter(iP).length,nC=open.filter(iC).length;
+  const nV=open.filter(iV).length,nE=open.filter(iE).length;
+  const bP=open.filter(iP).reduce((s,d)=>s+d.bal,0);
+  const bC=open.filter(iC).reduce((s,d)=>s+d.bal,0);
+  document.getElementById('pPrescrit').textContent=fN(nP);
+  document.getElementById('pBalPrescrit').textContent=fE(bP)+' en attente';
+  const {t2,bd}=gTC();
+  // Barres empilées: risque par quartier
+  const qrts=[...new Set(open.map(d=>d.qrt).filter(Boolean))];
+  const qData=qrts.map(q=>{const qd=open.filter(d=>d.qrt===q);return{q,p:qd.filter(iP).length,c:qd.filter(iC).length,v:qd.filter(iV).length,e:qd.filter(iE).length};})
+    .filter(x=>x.p+x.c+x.v+x.e>0).sort((a,b)=>(b.p+b.c+b.v)-(a.p+a.c+a.v));
+  dC('gPrescQ');
+  CH['gPrescQ']=new Chart(document.getElementById('gPrescQ'),{type:'bar',
+    data:{labels:qData.map(x=>x.q),datasets:[
+      {label:'Prescrit',data:qData.map(x=>x.p),backgroundColor:'rgba(227,37,107,0.80)',borderRadius:2},
+      {label:'Critique · <90 j',data:qData.map(x=>x.c),backgroundColor:'rgba(238,121,55,0.80)',borderRadius:2},
+      {label:'Vigilance · <180 j',data:qData.map(x=>x.v),backgroundColor:'rgba(253,194,0,0.80)',borderRadius:2}
+    ]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{color:t2,font:{size:11},boxWidth:12,padding:10}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},
+      scales:{x:{stacked:true,grid:{color:bd},ticks:{color:t2,callback:v=>fN(v)},beginAtZero:true},y:{stacked:true,grid:{color:'transparent'},ticks:{color:t2,font:{size:10}}}}}});
+  // Barres empilées: risque par catégorie
+  const cats=["Arrêt et Stationnement","SAC CLASSIQUE","SAC MIXTE"];
+  const catLbls=['Arrêt & Stat.','SAC CLASSIQUE','SAC MIXTE'];
+  const fns=[iP,iC,iV,iE];
+  const riskLbls=['Prescrit','Critique · <90 j','Vigilance · <180 j','En cours'];
+  const cols=['rgba(227,37,107,0.80)','rgba(238,121,55,0.80)','rgba(253,194,0,0.80)','rgba(27,174,161,0.80)'];
+  dC('gPrescC');
+  CH['gPrescC']=new Chart(document.getElementById('gPrescC'),{type:'bar',
+    data:{labels:catLbls,datasets:riskLbls.map((lbl,i)=>({label:lbl,data:cats.map(c=>open.filter(d=>d.cat===c&&fns[i](d)).length),backgroundColor:cols[i],borderRadius:2}))},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{color:t2,font:{size:11},boxWidth:12,padding:10}},tooltip:{callbacks:{label:ctx=>' '+ctx.dataset.label+': '+fN(ctx.raw)}}},
+      scales:{x:{stacked:true,grid:{color:'transparent'},ticks:{color:t2,font:{family:'Lexend Deca'}}},y:{stacked:true,grid:{color:bd},ticks:{color:t2,callback:v=>fN(v)},beginAtZero:true}}}});
+}
+
 function upChips(){
   const a=document.getElementById('chipsA');a.innerHTML='';
   function ac(lbl,fn){const c=document.createElement('div');c.className='chip';const rm=document.createElement('span');rm.className='rm';rm.textContent='×';rm.onclick=fn;c.appendChild(document.createTextNode(lbl+' '));c.appendChild(rm);a.appendChild(c);}
@@ -303,6 +435,7 @@ function upAll(){
   upBdg(data.length);upKPI(data);
   dG12(data);dG1(data);dG2(data);dG3(data);dG4(data);
   dG7(data);dG6(data);dG5(data);dG8(data);dG9(data);dG10(data);dG11(data);
+  dDelais(data);dPrescription(data);
   upChips();
 }
 

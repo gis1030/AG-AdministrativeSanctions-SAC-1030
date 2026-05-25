@@ -1,6 +1,32 @@
 // ════════════════════════════════════
-// DATA
+// DATA ADAPTER — GeoJSON FeatureCollection → flat array
+// Permite usar SAC2024_Contrevenant_Data.js como fuente única
+// para el dashboard y la cartografía GIS.
 // ════════════════════════════════════
+const ROWS = DATA.features.map(f => {
+  const p   = f.properties;
+  const raw = p["Contrevenant.Age"];
+  return {
+    id:       p["Contrevenant.ID"],
+    type:     p["ContrevenantClase"],
+    age:      (raw === "NA" || raw === null || raw === undefined) ? null : Number(raw),
+    genre:    p["Contrevenant.Type"],
+    rue:      p["Contrevenant.RueFR"],
+    cp:       String(p["Contrevenant.CodePostal"]),
+    localite: p["Contrevenant.Localite"],
+    pays:     p["Contrevenant.Pays"],
+    parcel:   p["Contrevenant.BlockParcel"],
+    quartier: p["Contrevenant.Quartier"],
+    pv:       p["Infraction.Type.ProcesVerbal"]         || 0,
+    constat:  p["Infraction.Type.Constat"]               || 0,
+    classique:p["Infraction.Categorie.Classique"]        || 0,
+    statio:   p["Infraction.Categorie.Stationnement"]    || 0,
+    mixte:    p["Infraction.Categorie.Mixte"]            || 0,
+    montant:  p["Infraction.Montant payé"]               || 0,
+    lon: f.geometry ? f.geometry.coordinates[0] : (p["Contrevenant.BlockParcel.Longitude"] || 0),
+    lat: f.geometry ? f.geometry.coordinates[1] : (p["Contrevenant.BlockParcel.Latitude"]  || 0)
+  };
+});
 
 // ════════════════════════════════════
 // CONSTANTS
@@ -66,7 +92,7 @@ function ttOpts(){
 // FILTERING
 // ════════════════════════════════════
 function getFiltered(){
-  return DATA.filter(d=>{
+  return ROWS.filter(d=>{
     if(!fTypes.has(d.type)) return false;
     if(fLocSearch && d.localite !== fLocSearch) return false;
     if(!fGenres.has(d.genre)) return false;
@@ -103,14 +129,14 @@ function renderKPIs(data){
 
   // badges
   const setB = (id,val,cls)=>{const el=document.getElementById(id);el.textContent=val;el.className='kbdg '+cls;};
-  setB('k2b1', n===DATA.length?'100 %':fP(n/DATA.length*100), 'nu');
+  setB('k2b1', n===ROWS.length?'100 %':fP(n/ROWS.length*100), 'nu');
   setB('k3b1', paid+' payés', paid/n>.8?'up':'dn');
   setB('k4b1', fN(totalPV)+' PV · '+fN(totalCon)+' Constat', 'nu');
   setB('k5b1', fN(totalSta)+' Stat. · '+fN(totalCla)+' Class.', 'nu');
   setB('k6b1', fP(n?sch/n*100:0)+' du total', sch>0?'up':'nu');
 
   document.getElementById('badge').textContent =
-    fN(n)+' / '+fN(DATA.length)+' contrevenants';
+    fN(n)+' / '+fN(ROWS.length)+' contrevenants';
 }
 
 // ════════════════════════════════════
@@ -782,7 +808,7 @@ function onGenreChange(){
   renderAll();
 }
 function rebuildLocSelect(){
-  let filtered=DATA.filter(d=>{
+  let filtered=ROWS.filter(d=>{
     if(fPays==='belgium') return d.pays==='Belgium';
     if(fPays==='autres')  return d.pays!=='Belgium';
     return true;

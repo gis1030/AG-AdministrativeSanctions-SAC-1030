@@ -225,12 +225,68 @@
         </table>
       </div>
     </div>
+
+    <!-- ══════════════════════════════════════════
+         SECTION : Délais administratifs
+    ══════════════════════════════════════════ -->
+    <div class="section-hdr">Délais administratifs · Faits → Enregistrement · Décision · Paiement</div>
+
+    <div class="kg">
+      <div class="kc" id="kdReg">
+        <div class="ktop"><div class="kico or"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#EE7937" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="kbdgs"><span class="kbdg nu" id="kdRegN">—</span></div></div>
+        <div class="kval" id="dReg">—</div>
+        <div class="klbl">Délai enregistrement moyen</div>
+      </div>
+      <div class="kc" id="kdDec">
+        <div class="ktop"><div class="kico yw"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#FDC200" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+          <div class="kbdgs"><span class="kbdg nu" id="kdDecN">—</span></div></div>
+        <div class="kval" id="dDec">—</div>
+        <div class="klbl">Délai décision moyen</div>
+      </div>
+      <div class="kc" id="kdPay">
+        <div class="ktop"><div class="kico gr"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#A2C426" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+          <div class="kbdgs"><span class="kbdg nu" id="kdPayN">—</span></div></div>
+        <div class="kval" id="dPay">—</div>
+        <div class="klbl">Délai paiement moyen</div>
+      </div>
+      <div class="kc" id="kpPrescrit">
+        <div class="ktop"><div class="kico pu"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#E3256B" stroke-width="2"><path d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div></div>
+        <div class="kval" style="color:#E3256B" id="pPrescrit">—</div>
+        <div class="klbl">Prescrits<br><small id="pBalPrescrit" style="color:var(--t3);font-size:.72rem">—</small></div>
+      </div>
+    </div>
+
+    <div class="cr c2" style="margin-top:16px">
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Délai moyen de décision par quartier</span><span style="font-size:.75rem;color:var(--t3)">(≥ 5 dossiers)</span></div>
+        <div style="height:280px;position:relative"><canvas id="gDelQ" role="img" aria-label="Délai décision par quartier"></canvas></div>
+      </div>
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Distribution des délais de décision</span></div>
+        <div style="height:280px;position:relative"><canvas id="gDelH" role="img" aria-label="Histogramme délais de décision"></canvas></div>
+      </div>
+    </div>
+    <div style="margin-bottom:24px"></div>
+
+    <div class="cr c2" style="margin-top:16px">
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Risque de prescription par quartier</span></div>
+        <div style="height:280px;position:relative"><canvas id="gPrescQ" role="img" aria-label="Risque de prescription par quartier"></canvas></div>
+      </div>
+      <div class="cc" style="margin-bottom:0">
+        <div class="ch"><span class="ctit">Risque de prescription par catégorie</span></div>
+        <div style="height:280px;position:relative"><canvas id="gPrescC" role="img" aria-label="Risque de prescription par catégorie"></canvas></div>
+      </div>
+    </div>
+    <div style="margin-bottom:24px"></div>
+
   </div>
 </div>
 </div>
 
 <script src="js/chart.umd.min.js"></script>
-<script src="data/SAC2024_Infractions.js"></script>
+<script src="data/SAC2024_Infraction_Data.js"></script>
 <script src="js/dashboard_infraction.js"></script>
 </body>
 </html>
