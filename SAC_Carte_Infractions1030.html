@@ -7,6 +7,18 @@
 <link rel="shortcut icon" href="css/images/logo1030GeoData.ico">
 <link rel="stylesheet" href="css/leaflet.css">
 <link rel="stylesheet" href="css/carte.css">
+<style>
+#cNav { position: absolute; top: 10px; left: 52px; z-index: 1000; display: flex; gap: 6px; font: 600 13px Calibri, Arial, sans-serif; }
+#cNav > a, #cNav > button { height: 34px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border: 0; border-radius: 4px;
+  background: #fff; box-shadow: 0 1px 5px rgba(0,0,0,.4); color: #004a77; text-decoration: none; cursor: pointer; font: inherit; }
+#cNav > a:hover, #cNav > button:hover, #cNav > button[aria-expanded=true] { background: #E3256B; color: #fff; }
+#cNavMenu { position: absolute; top: 40px; right: 0; min-width: 210px; background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.35); padding: 6px 0; }
+#cNavMenu[hidden] { display: none; }
+#cNavMenu .y { padding: 6px 14px 2px; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+#cNavMenu a { display: block; padding: 5px 14px 5px 22px; color: #004a77; text-decoration: none; font-weight: 400; }
+#cNavMenu a:hover { background: #fde8f0; color: #E3256B; }
+@media (max-width: 600px) { #cNav .lbl { display: none; } }
+</style>
 </head>
 <body>
 <div id="map"></div>
@@ -43,7 +55,16 @@
   </div>
 </div>
 
-<a id="homeBtn" href="index.html" title="Accueil" style="position:absolute;top:10px;left:52px;z-index:1000;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:4px;box-shadow:0 1px 5px rgba(0,0,0,.4);text-decoration:none;color:#333;font-size:18px">⌂</a>
+<nav id="cNav">
+  <a href="index.html" title="Retour à la page principale">⌂ <span class="lbl">Accueil</span></a>
+  <button id="cNavBtn" aria-expanded="false" aria-controls="cNavMenu" title="Tableaux de bord">📊 <span class="lbl">Dashboards</span> ▾</button>
+  <div id="cNavMenu" hidden><div class="y">2025</div><a href="SAC2025_Charts1030_Infractions.html">Infractions 2025</a><a href="SAC2025_Charts1030_Contrevenant.html">Contrevenants 2025</a><div class="y">2024</div><a href="SAC2024_Charts1030_Infractions.html">Infractions 2024</a><a href="SAC2024_Charts1030_Contrevenant.html">Contrevenants 2024</a></div>
+</nav>
+<script>(() => { const b = document.getElementById("cNavBtn"), m = document.getElementById("cNavMenu");
+  const set = o => { m.hidden = !o; b.setAttribute("aria-expanded", o); };
+  b.addEventListener("click", e => { e.stopPropagation(); set(m.hidden); });
+  document.addEventListener("click", e => { if (!m.contains(e.target)) set(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") set(false); }); })();</script>
 <button id="infoBtn" title="Informations">i</button>
 <div id="info" hidden>
   <div class="infoBox">
