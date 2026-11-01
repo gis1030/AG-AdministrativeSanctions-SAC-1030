@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAC Infractions 1030 — Carte par îlot</title>
+<link rel="shortcut icon" href="css/images/logo1030GeoData.ico">
+<link rel="stylesheet" href="css/leaflet.css">
+<link rel="stylesheet" href="css/carte.css">
+</head>
+<body>
+<div id="map"></div>
+
+<div id="panel">
+  <button id="pTog" title="Réduire / afficher">»</button>
+  <div id="pBody">
+    <div class="pSec">
+      <div class="pTit">Année</div>
+      <div id="years" class="rowBtns"></div>
+    </div>
+    <div class="pSec">
+      <div class="pTit">Propriété représentée</div>
+      <select id="ind"></select>
+    </div>
+    <div class="pSec">
+      <div class="pTit" id="legTit">Légende</div>
+      <div id="legend"></div>
+      <div id="legNote" class="note"></div>
+    </div>
+    <div class="pSec">
+      <div class="pTit">Schaerbeek</div>
+      <label><input type="radio" name="bd" value="quartiers" checked> Limites Schaerbeek Quartiers</label>
+      <label><input type="radio" name="bd" value="commune"> Limites Schaerbeek</label>
+      <label><input type="radio" name="bd" value="none"> Aucune limite</label>
+    </div>
+    <div class="pSec">
+      <div class="pTit">Fond de carte</div>
+      <label><input type="radio" name="bm" value="terrain" checked> Google Terrain</label>
+      <label><input type="radio" name="bm" value="osm"> OpenStreetMap (OSM France)</label>
+      <label><input type="radio" name="bm" value="hybrid"> Google Satellite_Streets</label>
+    </div>
+    <div id="summary" class="note"></div>
+  </div>
+</div>
+
+<a id="homeBtn" href="index.html" title="Accueil" style="position:absolute;top:10px;left:52px;z-index:1000;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:4px;box-shadow:0 1px 5px rgba(0,0,0,.4);text-decoration:none;color:#333;font-size:18px">⌂</a>
+<button id="infoBtn" title="Informations">i</button>
+<div id="info" hidden>
+  <div class="infoBox">
+    <button id="infoClose" title="Fermer">×</button>
+    <h3>Infractions SAC par îlot — Schaerbeek</h3>
+    <p>Chaque îlot (BlockParcel) est coloré selon la propriété choisie, pour l'année sélectionnée. Les classes sont identiques pour toutes les années afin de pouvoir les comparer. Les îlots sans infraction ne sont pas colorés.</p>
+    <p><b>Hors îlots (cercles)</b> : infractions sans îlot (« Dehors1030 »), représentées à leurs coordonnées. La taille du cercle dépend du nombre d'infractions.</p>
+    <p><b>Adresses sans numéro</b> : l'infraction est rattachée à un îlot de la rue ; au niveau de l'îlot, la répartition est donc indicative.</p>
+    <p><b>Contrevenant</b> et <b>âge</b> : nombre d'infractions commises par ces contrevenants (un contrevenant peut compter plusieurs fois).</p>
+    <p><b>Sources</b> : SAC_&lt;année&gt;_Infraction.xlsx, SAC_&lt;année&gt;_Infraction_BlockGIS.xlsx et SAC_&lt;année&gt;_Contrevenant.xlsx (Service Amendes Communales). Îlots : GeoData1030. Seuls des agrégats sont publiés (RGPD).</p>
+    <p id="infoGen" class="note"></p>
+  </div>
+</div>
+
+<div id="brand">
+  <img src="css/images/schaerbeek1030_logo.png" alt="1030 Schaerbeek">
+  <div id="title"></div>
+</div>
+
+<script src="js/leaflet.js"></script>
+<script src="js/leaflet-hash.js"></script>
+<script src="data/source/LimitesScaherbeek.js"></script>
+<script src="data/source/LimitesSchaerbeekQuartiers.js"></script>
+<script src="data/SAC_Carte_Data.js"></script>
+<script src="js/carte.js"></script>
+</body>
+</html>
