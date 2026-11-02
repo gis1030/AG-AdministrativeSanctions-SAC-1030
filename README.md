@@ -4,6 +4,8 @@ Statistical study of the Municipal Administrative Sanctions recorded by the muni
 
 ## 🔗 Quick access
 
+| Site | Description |
+|---|---|
 | 🏠 **Portal** | [https://gis1030.github.io/AG-AdministrativeSanctions-SAC-1030/](https://gis1030.github.io/AG-AdministrativeSanctions-SAC-1030/) ·
 | 🗺️ **Map of infractions by block (îlot) and year** | [SAC_Carte_Infractions1030.html](https://gis1030.github.io/AG-AdministrativeSanctions-SAC-1030/SAC_Carte_Infractions1030.html) ·
 
